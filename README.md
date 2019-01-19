@@ -12,8 +12,9 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
 **Author:** Alexis Delabriere and Etienne A. Thevenot (CEA, LIST, MetaboHUB, W4M Development Core Team)   
 **Email:** [alexis.delabriere(at)hotmail.fr](mailto:alexis.delabriere@hotmail.fr) and [etienne.thevenot(at)cea.fr](mailto:etienne.thevenot@cea.fr)  
 **Citation:** Delabriere A., Hautbergue T., ..., Junot C., Fenaille F. and Thevenot E.A. (submitted). *mineMS2*: Annotation of spectral libraries with exact fragmentation patterns.  
-**Licence:** CeCILL  
-# **Reference history:** [W4M00001a_sacurine-subset-statistics](http://galaxy.workflow4metabolomics.org/history/list_published), [W4M00001b_sacurine_complete](http://galaxy.workflow4metabolomics.org/history/list_published)     
+**Licence:** CeCILL 
+
+[comment]: # (**Reference history:** [W4M00001a_sacurine-subset-statistics](http://galaxy.workflow4metabolomics.org/history/list_published), [W4M00001b_sacurine_complete](http://galaxy.workflow4metabolomics.org/history/list_published)    ) 
 **Funding:** CEA
 
 ### Installation
