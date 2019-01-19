@@ -52,6 +52,7 @@ options(stringsAsFactors = FALSE)
 ## libraries
 
 suppressMessages(library(mineMS2))
+suppressMessages(library(igraph))
 
 ## constants
 
@@ -93,215 +94,46 @@ cat("\nStart of the '", modNamC, "' Galaxy module call: ",
 
 ## arguments
 
-xMN <- t(as.matrix(read.table(argVc["dataMatrix_in"],
-                              check.names = FALSE,
-                              header = TRUE,
-                              row.names = 1,
-                              sep = "\t",
-                              comment.char = "")))
+path_mgf <- argVc["spectra_mgf"]
 
-samDF <- read.table(argVc["sampleMetadata_in"],
-                    check.names = FALSE,
-                    header = TRUE,
-                    row.names = 1,
-                    sep = "\t",
-                    comment.char = "")
-flgF("identical(rownames(xMN), rownames(samDF))", txtC = "Sample names (or number) in the data matrix (first row) and sample metadata (first column) are not identical; use the 'Check Format' module in the 'Quality Control' section")
-
-varDF <- read.table(argVc["variableMetadata_in"],
-                    check.names = FALSE,
-                    header = TRUE,
-                    row.names = 1,
-                    sep = "\t",
-                    comment.char = "")
-flgF("identical(colnames(xMN), rownames(varDF))", txtC = "Variable names (or number) in the data matrix (first column) and sample metadata (first column) are not identical; use the 'Check Format' module in the 'Quality Control' section")
-
-flgF("argVc['respC'] == 'none' || (argVc['respC'] %in% colnames(samDF))",
-     txtC = paste0("Y Response argument (", argVc['respC'], ") must be either none or one of the column names (first row) of your sample metadata"))
-if(argVc["respC"] != "none") {
-  yMCN <- matrix(samDF[, argVc['respC']], ncol = 1, dimnames = list(rownames(xMN), argVc['respC']))
-} else
-  yMCN <- NULL
-
-if(argVc["testL"] == "TRUE") {
-  flgF("!is.null(yMCN)",
-       txtC = "Predictions cannot be peformed with PCA models")
-  flgF("'test.' %in% colnames(samDF)",
-       txtC = "No 'test.' column found in the sample metadata")
-  flgF("identical(sort(unique(samDF[, 'test.'])), c('no', 'yes'))",
-       txtC = "'test.' column of sample metadata must contain both 'yes' (tested samples) and 'no' (samples to be used for model training) values, and nothing else")
-  flgF("identical(sort(unique(samDF[, 'test.'])), c('no', 'yes'))",
-       txtC = "'test.' column of sample metadata must contain both 'yes' (tested samples) and 'no' (samples to be used for model training) values, and nothing else")
-  flgF("!any(is.na(yMCN[samDF[, 'test.'] == 'no', ]))",
-       txtC = "samples for model training (i.e. 'no' value in the 'test.' column) should not contain NA in the response")
-  tesVl <- samDF[, "test."] == "yes"
-  xTesMN <- xMN[tesVl, , drop = FALSE]
-  xMN <- xMN[!tesVl, , drop = FALSE]
-  yMCN <- yMCN[!tesVl, , drop = FALSE]
-} else
-  tesVl <- NULL
-
-if(!('parAsColC' %in% names(argVc)))
-  argVc["parAsColC"] <- "none"
-flgF("argVc['parAsColC'] == 'none' || argVc['parAsColC'] %in% colnames(samDF)", txtC = paste0("Sample color argument (", argVc['parAsColC'], ") must be either none or one of the column names (first row) of your sample metadata"))
-if(argVc["parAsColC"] != "none") {
-  parAsColFcVn <- samDF[, argVc['parAsColC']]
-  if(!is.null(tesVl)) {
-    parAsColFcVn <- parAsColFcVn[!tesVl]
-  }
-  if(is.character(parAsColFcVn))
-    parAsColFcVn <- factor(parAsColFcVn)
-} else
-  parAsColFcVn <- NA
-
-if(!('parMahalC' %in% names(argVc)) || argVc["parMahalC"] == "NA") {
-  if(!is.null(yMCN) && ncol(yMCN) == 1 && mode(yMCN) == "character")
-    argVc["parMahalC"] <- argVc["respC"]
-  else
-    argVc["parMahalC"] <- "none"
-}
-flgF("argVc['parMahalC'] == 'none' || (argVc['parMahalC'] %in% colnames(samDF))",
-     txtC = paste0("Mahalanobis argument (", argVc['parMahalC'], ") must be either 'NA', 'none' or one of the column names (first row) of your sample metadata"))
-if(argVc["parMahalC"] == "none") {
-  parEllipsesL <- FALSE
-} else {
-  if(is.null(yMCN)) { ## PCA case
-    flgF("mode(samDF[, argVc['parMahalC']]) == 'character'",
-         txtC = paste0("Mahalanobis argument (", argVc['parMahalC'], ") must correspond to a column of characters in your sampleMetadata"))
-    parAsColFcVn <- factor(samDF[, argVc["parMahalC"]])
-    parEllipsesL <- TRUE
-  } else { ## (O)PLS-DA case
-    flgF("identical(as.character(argVc['respC']), as.character(argVc['parMahalC']))",
-         txtC = paste0("The Mahalanobis argument (", argVc['parMahalC'], ") must be identical to the Y response argument (", argVc['respC'], ")"))
-    parEllipsesL <- TRUE
-  }
-}
-
-if(!('parLabVc' %in% names(argVc)))
-  argVc["parLabVc"] <- "none"
-flgF("argVc['parLabVc'] == 'none' || (argVc['parLabVc'] %in% colnames(samDF))",
-     txtC = paste0("Sample labels argument (", argVc['parLabVc'], ") must be either none or one of the column names (first row) of your sample metadata"))
-if('parLabVc' %in% names(argVc))
-  if(argVc["parLabVc"] != "none") {
-    flgF("mode(samDF[, argVc['parLabVc']]) == 'character'",
-         txtC = paste0("The sample label argument (", argVc['parLabVc'], ") must correspond to a sample metadata column of characters (not numerics)"))
-    parLabVc <- samDF[, argVc['parLabVc']]
-    if(!is.null(tesVl)) {
-      parLabVc <- parLabVc[!tesVl]
-    }
-  } else
-    parLabVc <- NA
-
-if('parPc1I' %in% names(argVc)) {
-  parCompVi <-  as.numeric(c(argVc["parPc1I"], argVc["parPc2I"]))
-} else
-  parCompVi <- c(1, 2)
+path_network <- argVc["spectra_graphml"]
 
 
-## checking
-##---------
+#### Computation and plot ####
+
+# sink()
+
+# supp_infos <- read.table(path_supp_info,header=TRUE,sep=";")
+
+### Sepctra are read and thresholded
+m2l <- mineMS2::ms2Lib(path_mgf)
+              # suppInfos = supp_infos, intThreshold = 3000)
+
+### An ID is added to each spectra
+infos <- mineMS2::getInfo(m2l,"S")
+
+# ids <- paste(paste("MZ",infos[,"mz"],sep=""),paste("RT",infos[,"rt"],sep=""),sep="_")
+ids <- paste(paste("MZ",infos[,"mz.precursor"],sep=""),sep="_")
+
+m2l <- mineMS2::setIds(m2l,ids)
+
+### DAGs are created
+m2l <- mineMS2::discretizeMassLosses(m2l,dmz = 0.008,ppm=8,heteroAtoms=FALSE,maxFrags=15)
+
+### Patterns are detected
+m2l <- mineMS2::mineClosedSubgraphs(m2l,sizeMin=1,count=2)
 
 
-flgF("argVc['predI'] == 'NA' || argVc['orthoI'] == 'NA' || as.numeric(argVc['orthoI']) > 0 || parCompVi[2] <=  as.numeric(argVc['predI'])",
-     txtC = paste0("The highest component to display (", parCompVi[2], ") must not exceed the number of predictive components of the model (", argVc['predI'], ")"))
+### gnps_network_reading
+
+net_gnps <- read_graph(path_network, "graphml")
 
 
-if(argVc["orthoI"] == "NA" || argVc["orthoI"] != "0")
-  if(argVc["predI"] == "NA" || argVc["predI"] != "0") {
-    argVc["predI"] <- "1"
-    cat("\nWarning: OPLS: number of predictive components ('predI' argument) set to 1\n", sep = "")
-  }
-
-if(argVc["predI"] != "NA")
-  if(as.numeric(argVc["predI"]) > min(nrow(xMN), ncol(xMN))) {
-    argVc["predI"] <- as.character(min(nrow(xMN), ncol(xMN)))
-    cat("\nWarning: 'predI' set to the minimum of the dataMatrix dimensions: ", as.numeric(argVc["predI"]), "\n", sep = "")
-  }
-
-if("algoC" %in% names(argVc) && argVc["algoC"] == "svd" && length(which(is.na(c(xMN)))) > 0) {
-  minN <- min(c(xMN[!is.na(xMN)])) / 2
-  cat("\nWarning: Missing values set to ", round(minN, 1), " (half minimum value) for 'svd' algorithm to be used\n", sep = "")
-}
+#### Print ####
 
 
-##------------------------------
-## Computation and plot
-##------------------------------
 
-
-sink()
-
-optWrnN <- options()$warn
-options(warn = -1)
-
-ropLs <- opls(x = xMN,
-              y = yMCN,
-              predI = ifelse(argVc["predI"] == "NA", NA, as.numeric(argVc["predI"])),
-              orthoI = ifelse(argVc["orthoI"] == "NA", NA, as.numeric(argVc["orthoI"])),
-              algoC = ifelse('algoC' %in% names(argVc), argVc["algoC"], "default"),
-              crossvalI = ifelse('crossvalI' %in% names(argVc), as.numeric(argVc["crossvalI"]), 7),
-              log10L = ifelse('log10L' %in% names(argVc), as.logical(argVc["log10L"]), FALSE),
-              permI = ifelse('permI' %in% names(argVc), as.numeric(argVc["permI"]), 20),
-              scaleC = ifelse('scaleC' %in% names(argVc), argVc["scaleC"], "standard"),
-              subset = NULL,
-              printL = FALSE,
-              plotL = FALSE,
-              .sinkC = argVc['information'])
-
-modC <- ropLs@typeC
-sumDF <- getSummaryDF(ropLs)
-desMC <- ropLs@descriptionMC
-scoreMN <- getScoreMN(ropLs)
-loadingMN <- getLoadingMN(ropLs)
-
-vipVn <- coeMN <- orthoScoreMN <- orthoLoadingMN <- orthoVipVn <- NULL
-
-if(grepl("PLS", modC)) {
-  
-  vipVn <- getVipVn(ropLs)
-  coeMN <- coef(ropLs)
-  
-  if(grepl("OPLS", modC)) {
-    orthoScoreMN <- getScoreMN(ropLs, orthoL = TRUE)
-    orthoLoadingMN <- getLoadingMN(ropLs, orthoL = TRUE)
-    orthoVipVn <- getVipVn(ropLs, orthoL = TRUE)
-  }
-  
-}
-
-ploC <- ifelse('typeC' %in% names(argVc), argVc["typeC"], "summary")
-
-if(sumDF[, "pre"] + sumDF[, "ort"] < 2) {
-  if(!(ploC %in% c("permutation", "overview"))) {
-    ploC <- "summary"
-    plotWarnL <- TRUE
-  }
-} else
-  plotWarnL <- FALSE
-
-plot(ropLs,
-     typeVc = ploC,
-     parAsColFcVn = parAsColFcVn,
-     parCexN = ifelse('parCexN' %in% names(argVc), as.numeric(argVc["parCexN"]), 0.8),
-     parCompVi = parCompVi,
-     parEllipsesL = parEllipsesL,
-     parLabVc = parLabVc,
-     file.pdfC = argVc['figure'],
-     .sinkC = argVc['information'])
-
-options(warn = optWrnN)
-
-
-##------------------------------
-## Print
-##------------------------------
-
-
-sink(argVc["information"], append = TRUE)
-
-if(plotWarnL)
-  cat("\nWarning: For single component models, only 'overview' (and 'permutation' in case of single response (O)PLS(-DA)) plot(s) are available\n", sep = "")
-
+# sink(argVc["information"], append = TRUE)
 
 cat("\n", modC, "\n", sep = "")
 

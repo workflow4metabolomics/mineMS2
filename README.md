@@ -37,7 +37,14 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
     ```r
     install.packages("devtools")  
     devtools::install_github("https://github.com/adelabriere/mineMS2")      
+   ```
+
+  + **igraph** from CRAN  
+  
+    ```r
+    install.packages("igraph", dep=TRUE)  
     ```
+
 <!--
 ### Tests
 
