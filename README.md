@@ -13,16 +13,17 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
 **Email:** [alexis.delabriere(at)hotmail.fr](mailto:alexis.delabriere@hotmail.fr) and [etienne.thevenot(at)cea.fr](mailto:etienne.thevenot@cea.fr)  
 **Citation:** Delabriere A., Hautbergue T., ..., Junot C., Fenaille F. and Thevenot E.A. (submitted). *mineMS2*: Annotation of spectral libraries with exact fragmentation patterns.  
 **Licence:** CeCILL 
-
-[comment]: # (**Reference history:** [W4M00001a_sacurine-subset-statistics](http://galaxy.workflow4metabolomics.org/history/list_published), [W4M00001b_sacurine_complete](http://galaxy.workflow4metabolomics.org/history/list_published)    ) 
+<!-- **Reference history:** [W4M00001a_sacurine-subset-statistics](http://galaxy.workflow4metabolomics.org/history/list_published), [W4M00001b_sacurine_complete](http://galaxy.workflow4metabolomics.org/history/list_published)     -->
 **Funding:** CEA
 
 ### Installation
 
 * Configuration file: `mineMS2_config.xml` 
-# * Image files: 
-#   + `static/images/multivariate_workflowPositionImage.png` 
-#   + `static/images/multivariate_workingExampleImage.png` 
+
+<!-- * Image files:
+  + `static/images/multivariate_workflowPositionImage.png`
+  + `static/images/multivariate_workingExampleImage.png` -->
+  
 * Wrapper file: `mineMS2_wrapper.R` 
 * R packages  
   + **batch** from CRAN  
@@ -37,19 +38,20 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
     install.packages("devtools")  
     devtools::install_github("https://github.com/adelabriere/mineMS2")      
     ```
+<!--
+### Tests
 
-# ### Tests
-# 
-# The code in the wrapper can be tested by running the `runit/mineMS2_runtests.R` R file
-# 
-# You will need to install **RUnit** package in order to make it run:
-# ```r
-# install.packages('RUnit', dependencies = TRUE)
-# ```
-# 
-# ### Working example  
-# 
-# See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-subset-complete**, **W4M00002_mtbls2**, **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published) 
+The code in the wrapper can be tested by running the `runit/mineMS2_runtests.R` R file
+
+You will need to install **RUnit** package in order to make it run:
+```r
+install.packages('RUnit', dependencies = TRUE)
+```
+
+### Working example
+
+See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-subset-complete**, **W4M00002_mtbls2**, **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
+-->
 
 ### News  
 
