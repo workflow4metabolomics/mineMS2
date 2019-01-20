@@ -1,9 +1,10 @@
-<tool id="mineMS2" name="mineMS2" version="3.0.0">
+<tool id="mineMS2" name="mineMS2" version="0.0.0">
   <description>Annotation of spectral libraries with exact fragmentation patterns</description>
   
   <requirements>
     <requirement type="package" version="1.1_4">r-batch</requirement>
-    <!-- <requirement type="package" version="1.4.0">bioconductor-proFIA</requirement> -->
+    <!-- <requirement type="package" version="1.4.0">bioconductor-mineMS2</requirement> -->
+	<requirement type="package" version="1.1_4">r-igraph</requirement>
   </requirements>
   
   <stdio>
@@ -18,53 +19,49 @@
   
   network_graphml "$network_graphml"
   
-  threshold "$threshold"
+  thresholdVn "$thresholdVn"
+
+  annotation_graphml "$annotation_graphml"
+
+  figure_pdf "$figure_pdf"
   
-  information "$information"
+  information_txt "$information_txt"
   
   ]]></command>
   
   <inputs>
   
-    <param name="spectra_mgf" label="MS2 spectra" type="data" format="text" help="mgf file" />
+    <param name="spectra_mgf" label="MS2 spectra" type="data" format="mgf" help="mgf file" />
 	 
-    <param name="network_graphml" label="GNPS molecular network" type="data" format="text" help="graphML file resulting from the GNPS analysis of the mgf file above" />
+    <param name="network_graphml" label="GNPS molecular network" type="data" format="graphml" help="graphML file resulting from the GNPS analysis of the mgf file above" />
     
-    <param name="threshold" label="Motif intensity,Proportion of spectra threshold" type="text" value = "X,Y" help="only motifs with at least X% of intensity in at least Y spectra will be kept" />
+    <param name="thresholdVn" label="Motif intensity,Proportion of spectra threshold" type="text" value = "X,Y" help="only motifs with at least X% of intensity in at least Y spectra will be kept" />
     
   </inputs>
   
   <outputs>
-    <!-- <data name="dataMatrix_out" label="${tool.name}_dataMatrix.tsv" format="tabular" ></data> -->
-    <!-- <data name="sampleMetadata_out" label="${tool.name}_sampleMetadata.tsv" format="tabular" ></data> -->
-    <!-- <data name="variableMetadata_out" label="${tool.name}_variableMetadata.tsv" format="tabular" ></data> -->
-    <!-- <data name="figure" label="${tool.name}_figure.pdf" format="pdf"/> -->
+
+    <data name="annotation_graphml" label="${tool.name}_annotation.graphml" format="graphml" ></data>
+
+    <data name="figure_pdf" label="${tool.name}_figure.pdf" format="pdf"/>
+		
+    <data name="information_txt" label="${tool.name}_information.txt" format="txt"/>
 	
-	
-    <data name="information" label="${tool.name}_information.txt" format="txt"/>
   </outputs>
   
-  <!-- <tests> -->
-    <!-- <test> -->
-      <!-- <param name="inputs|input" value="zip_file" /> -->
-      <!-- <param name="inputs|zip_file" value="input-plasFIA.zip" ftype="zip" /> -->
-      <!-- <param name="ppmN" value="2"/> -->
-      <!-- <param name="dmzN" value="0.0005"/> -->
-      <!-- <param name="ppmGroupN" value="1"/> -->
-      <!-- <param name="dmzGroupN" value="0.0005"/> -->
-      <!-- <param name="fracGroupN" value="0.1"/> -->
-      <!-- <param name="imputeC" value="randomForest"/> -->
-      <!-- <output name="dataMatrix_out" file="output-dataMatrix.tsv" /> -->
+  <tests>
+    <test>
+	
+      <param name="spectra_mgf" value="ex_mgf" ftype="mgf" />	  
+
+      <param name="network_graphml" value="ex_gnps_network" ftype="graphml" />
 	  
-      <!-- <output name="information"> -->
-      <!-- <assert_contents> -->
-          <!-- <has_text text="707  groups have been done" /> -->
-	      <!-- <has_text text="3 samples x 707 variables" /> -->
-          <!-- <has_text text="2089  peaks detected" /> -->
-       <!-- </assert_contents> -->
-      <!-- </output> -->
-    <!-- </test> -->
-  <!-- </tests> -->
+	  <param name="thresholdVn" value=""/>
+
+      <output name="annotation_graphml" file="ex_annotated_gnps_network" ftype="graphml" />
+
+    </test>
+  </tests>
   
   <help>
 
@@ -107,13 +104,6 @@ Description
 -----------
 
 This vignette describes the use of the *mineMS2* software (Delabriere *et al.*, submitted) coupled to the GNPS MS/MS molecular networking methodology (Watrous *et al.*, 2012). In this example, the molecular network has been precomputed on the GNPS website and extracted in the *.graphML* format (file  *ex_gnps_network.graphml* inside the *dataset* subdirectory of the _mineMS2_ installation folder). We strongly recommend to compute the patterns and the GNPS network on the same .mgf file to avoir matching issues.
-<!-- **Flow Injection Analysis coupled to High-Resolution Mass Spectrometry (FIA-HRMS)** is a promising approach for **high-throughput metabolomics** (Madalinski *et al.*, 2008; Fuhrer *et al.*, 2011; Draper *et al.*, 2013). FIA- HRMS data, however, cannot be preprocessed with current software tools which rely on liquid chromatography separation, or handle low resolution data only. -->
-
-<!-- The **proFIA module is a workflow** allowing to preprocess FIA-HRMS raw data in **centroid** mode and open format (netCDF, mzData, mzXML, and mzML), and generates the table of peak intensities (**peak table**). The workflow consists in **peak detection and quantification** within individual sample files, followed by **alignment** between files in the m/z dimension, and **imputation** of the missing values in the final peak table (Delabriere *et al.*, submitted). For each ion, the graph representing the intensity as a function of time is called a **flowgram**. A flowgram can be modeled as I = kP + ME(P) + B + e, where k is the response factor (corresponding to the ionization properties of the analyte), P is the **sample peak** (normalized profile which is common for all analytes from a sample and depends on the flow injection conditions only), ME is the **matrix effect**, B is the **solvent baseline**, and e is the heteroscedastic noise. -->
-
-<!-- The generated peak table is available in the '3 table' W4M tabular format (**dataMatrix**, **sampleMetadata**, and **variableMetadata**) for downstream statistical analysis and annotation with W4M modules. -->
-
-<!-- A figure provides **diagnostics** and visualization of the preprocessed data set. -->
 
 ---------------------------------------------------
 
@@ -130,139 +120,64 @@ This vignette describes the use of the *mineMS2* software (Delabriere *et al.*, 
 Workflow position
 -----------------
 
-<!-- .. image:: profia_workflowPositionImage.png -->
-        <!-- :width: 600 -->
+This tool is dedicated to the annotation of MS/MS spectra.
 
 -----------
 Input files
 -----------
 
-<!-- +---------------------------+------------+ -->
-<!-- | Parameter : num + label   |   Format   | -->
-<!-- +===========================+============+ -->
-<!-- | 1 : Choose your inputs    |   zip      | -->
-<!-- +---------------------------+------------+ -->
++---------------------------+------------+
+| File                      |   Format   |
++===========================+============+
+| 1) Set of MS2 spectra     |   mgf      |
++---------------------------+------------+
+| 2) GNPS molecular network |   graphml  |
++---------------------------+------------+
 
-<!-- --------------------------------------------------- -->
+.. class:: warningmark
 
-<!-- .. class:: warningmark -->
+VERY IMPORTANT: We strongly recommend that the GNPS network was computed on the same mgf file as the one used in this tool, to avoid matching issues.
 
-<!-- VERY IMPORTANT: Your data must be in **centroid** mode (centroidization of raw files and conversion to an open format can be achieved with the proteowizard software: http://proteowizard.sourceforge.net/). -->
-
-
-<!-- You have two methods for your inputs: -->
-    <!-- | Zip file (recommended): You can put a zip file containing your inputs: myinputs.zip (containing all your conditions as sub-directories; see below). -->
-    <!-- | library folder: You must specify the name of your "library" (folder) created within your space project (for example: /projet/externe/institut/login/galaxylibrary/yourlibrary). Your library must contain all your conditions as sub-directories. -->
-
-<!-- **Steps for creating the zip file** -->
-
-<!-- **Step1: Creating your directory and hierarchize the subdirectories** -->
-
-<!-- .. class:: warningmark -->
-
-<!-- VERY IMPORTANT: If you zip your files under Windows, you must use the **7Zip** software (http://www.7-zip.org/), otherwise your zip will not be well unzipped on the platform W4M (zip corrupted bug). -->
-
-<!-- 1a) Prepare a parent folder with the name of your data set (e.g., 'arabidopsis') containing your files: -->
-   <!-- | 'arabidopsis/w1.raw' -->
-   <!-- | 'arabidopsis/w2.raw' -->
-   <!-- | ... -->
-   <!-- | 'arabidopsis/m1.raw' -->
-   <!-- | 'arabidopsis/m2.raw' -->
-   <!-- | ... -->
-   <!-- | -->
+----------
+Parameters
+----------
    
-<!-- 1b) If you have several experimental conditions resulting in distinct profiles of your samples (e.g. 'wild-type' and 'mutant' genotypes), create subfolders for your files (e.g., 'wild' and 'mutant') into your parent folder: -->
-   <!-- | 'arabidopsis/wild/w1.raw' -->
-   <!-- | 'arabidopsis/wild/w2.raw' -->
-   <!-- | ... -->
-   <!-- | 'arabidopsis/mutant/m1.raw' -->
-   <!-- | 'arabidopsis/mutant/m2.raw' -->
-   <!-- | ... -->
-   <!-- | -->
-   
-<!-- **Step2: Creating a zip file** -->
-   <!-- | Zip your **parent** folder (here the 'arabidopsis' folder) containing all the subfolders and files with **7Zip**. -->
-   <!-- | -->
+Motif intensity, Proportion of spectra threshold; (default = 7)
+	|  Only motifs with at least X% of intensity in at least Y spectra will be kept.
+	| 
 
-<!-- **Step 3 : Uploading it to our Galaxy server** -->
-   <!-- | If your zip file is less than 2Gb, you get use the **Upload File** tool and the **no_unzip.zip** type to upload it. -->
-   <!-- | Otherwise if your zip file is larger than 2Gb, please refer to the HOWTO on workflow4metabolomics.org (http://application.sb-roscoff.fr/download/w4m/howto/galaxy_upload_up_2Go.pdf). -->
-   <!-- | For more informations, don't hesitate to send us an email at supportATworkflow4metabolomics.org). -->
-   <!-- | -->
 
-<!-- ---------- -->
-<!-- Parameters -->
-<!-- ---------- -->
-   
-<!-- Maximum deviation between centroids during band detection; in ppm (default = 7) -->
-	<!-- | m/z tolerance of centroids corresponding to the same ion from one scan to the other. -->
-	<!-- |  -->
+------------
+Output files
+------------
 
-<!-- Minimal maximum deviation between centroids during band detection; in Da (default = 0.001); to avoid bias at low mass values, the deviation is the maximum between this quantity and the deviation in ppm  -->
-	<!-- | minimum m/z tolerance of centroids corresponding to the same ion from one scan to the other. -->
-	<!-- |  -->
+spectra.mgf
+	| All MS2 spectra as a single mgf file.
+	|
 
-<!-- Accuracy of the mass spectrometer to be used during feature alignment; in ppm (default = 3); should be less than the ppm parameter used for detection -->
-	<!-- | Should be inferior or equal to the ppm deviation parameter above. -->
-	<!-- |  -->
-    
-<!-- Minimal accuracy of the mass spectrometer to be used during feature alignment; in Da (default = 0.0005); to avoid bias at low mass values; the deviation is the maximum between this quantity and the deviation in ppm -->
-	<!-- |  -->
+network.graphml
+	| GNPS molecular network as a graphml file. We strongly recommend that the GNPS network was computed on the same spectra.mgf file as above. This network can be visualized in Cytoscape (note that the GraphML format is supported by Cytoscape 3: select 'File > Import > Network from file'; with Cytoscape 2, the GraphMLReader plugin is needed):
+	|
 
-<!-- Minimum fraction of samples in which a peak should be detected in at least one class to be kept during feature alignment (default = 0.5) -->
-	<!-- | Identical to the corresponding parameter in XCMS.  -->
-	<!-- |      -->
-
-<!-- Imputation method for missing values (default = 'randomForest') -->
-	<!-- | -->
-
-<!-- Minimum fraction of centroids in the estimated injection window for a band to be built (advanced; default = 0.3) -->
-        <!-- | -->
-
-<!-- Minimum number of consecutive centroids for a band to be built (advanced; default = half of the size of the estimated injection window) -->
-	<!-- |     		 -->
-
-<!-- First scan to be preprocessed (advanced; default = 1) -->
-	<!-- |     		 -->
-
-<!-- Last scan to be preprocessed (advanced; default = last acquisition scan) -->
-	<!-- |     		 -->
-
-<!-- ------------ -->
-<!-- Output files -->
-<!-- ------------ -->
-
-<!-- dataMatrix.tabular -->
-	<!-- | **dataMatrix** tabular separated file with the variables as rows and samples as columns. Missing values are indicated as 'NA' (i.e. when the signal was not significantly different from noise). -->
-	<!-- | -->
-	
-<!-- sampleMetadata.tabular -->
-	<!-- | **sampleMetadata** tabular separated file containing the sample metadata as columns. -->
-	<!-- |  -->
-	
-<!-- variableMetadata.tabular -->
-	<!-- | **variableMetadata** tabular separated file containing the variable metadata as columns. The **timeShifted** flag is set to 1 when the flowgram is time shifted compared to the sample peak (probably due to liquid retention in the FI tube). The **corSampPeakMean** metric is the correlation between the feature flowgram and the sample peak (values are in [-1, 1]). A value below 0.2 suggests that the feature signal is affected by a strong matrix effect. The **meanSolvent** is the mean baseline signal in the feature flowgrams. The **signalOverSolventPvalueMean** is the mean p-value of the tests discriminating between signal and baseline solvent. -->
-	<!-- |  -->
-
-<!-- figure.pdf -->
-	<!-- | Visualization and diagnostics about the preprocessed data set; **Feature quality**: Number of detected features per sample for each of the three categories: 'Well-behaved' features have a peak shape close to the sample peak (optimal FIA acquisition is achieved when the majority of the features fall into this category); 'Shifted' indicates a time shift compared to the sample peak, and probably results from retention in the FI tube; 'Significant Matrix Effect' corresponds to a correlation between the feature and the samples peaks of less than 0.2, which is usually caused by a strong matrix effect; **Sample peaks**: Visualization of the peak model for each sample; should have close shapes in case of similar FIA conditions; **m/z density**: may allow to detect a missing m/z value, and in turn, suggest that the *ppm* parameter should be modified; **PCA score plot** of the log10 intensities to detect sample outliers. -->
-	<!-- |  -->
+figure.pdf
+	| Visualization of the detected patterns and their occurences in the MS2 spectra.
+	| 
 			
-<!-- information.txt -->
-	<!-- | Text file with all messages and warnings generated during the computation. -->
-	<!-- | -->
+information.txt
+	| Text file with all messages and warnings generated during the computation.
+	|
 
-<!-- --------------------------------------------------- -->
+---------------------------------------------------
 
-<!-- --------------- -->
-<!-- Working example -->
-<!-- --------------- -->
+---------------
+Working example
+---------------
 
-<!-- Figure output -->
-<!-- ============= -->
+Figure output
+=============
 
-<!-- .. image:: profia_workingExampleImage.png -->
-        <!-- :width: 600 -->
+.. image:: annotatedGNPS.png
+        :width: 600
         
 ---------------------------------------------------
 
@@ -280,6 +195,15 @@ The development of the tool is in progress.
 </help>
 
 <citations>
+  <citation type="bibtex">@Article{Delabriere19,
+  Title                    = {mineMS2: Annotation of spectral libraries with exact fragmentation patterns},
+  Author                   = {Delabriere A., Hautbergue T., ..., Junot C., Fenaille F. and Thevenot E.A.},
+  Journal                  = {},
+  Year                     = {submitted},
+  Number                   = {},
+  Pages                    = {},
+  Volume                   = {},
+  }</citation>
   <citation type="doi">10.1093/bioinformatics/btu813</citation>
 </citations>
 

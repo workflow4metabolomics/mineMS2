@@ -7,8 +7,8 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
 
 ### Description
 
-**Version:** 0.0.0  
-**Date:** 2019-01-19  
+**Version:** 0.0.2  
+**Date:** 2019-01-10  
 **Author:** Alexis Delabriere and Etienne A. Thevenot (CEA, LIST, MetaboHUB, W4M Development Core Team)   
 **Email:** [alexis.delabriere(at)hotmail.fr](mailto:alexis.delabriere@hotmail.fr) and [etienne.thevenot(at)cea.fr](mailto:etienne.thevenot@cea.fr)  
 **Citation:** Delabriere A., Hautbergue T., ..., Junot C., Fenaille F. and Thevenot E.A. (submitted). *mineMS2*: Annotation of spectral libraries with exact fragmentation patterns.  
@@ -45,7 +45,6 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
     install.packages("igraph", dep=TRUE)  
     ```
 
-<!--
 ### Tests
 
 The code in the wrapper can be tested by running the `runit/mineMS2_runtests.R` R file
@@ -54,11 +53,6 @@ You will need to install **RUnit** package in order to make it run:
 ```r
 install.packages('RUnit', dependencies = TRUE)
 ```
-
-### Working example
-
-See the **W4M00001a_sacurine-subset-statistics**, **W4M00001b_sacurine-subset-complete**, **W4M00002_mtbls2**, **W4M00003_diaplasma** shared histories in the **Shared Data/Published Histories** menu (https://galaxy.workflow4metabolomics.org/history/list_published)
--->
 
 ### News  
 
