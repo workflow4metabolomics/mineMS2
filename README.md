@@ -35,7 +35,7 @@ Status: [![Build Status](https://travis-ci.org/workflow4metabolomics/mineMS2.svg
   + **mineMS2** from Github  
   
     ```r
-    install.packages("devtools")  
+    install.packages("devtools", dep=TRUE)  
     devtools::install_github("https://github.com/adelabriere/mineMS2")      
    ```
 

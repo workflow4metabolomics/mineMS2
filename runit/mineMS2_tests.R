@@ -1,11 +1,14 @@
 test_input <- function() {
 
     testDirC <- "input"
-    argLs <- list(thresholdVn = "")
-
+    argLs <- list(spectra_mgf = "ex_mgf.mgf",
+                  network_graphml = "ex_gnps_network.graphml",
+                  thresholdVn = "")
+    
     argLs <- c(defaultArgF(testDirC), argLs)
     outLs <- wrapperCallF(argLs)
     
-    checkEqualsNumeric(outLs[["datMN"]]["C100a", "M86.0965"], 1365657.4687182, tolerance = 1e-7)
+    checkIdentical(outLs[["annVc"]][35],
+                   "      <data key=\"v_precursor mass\">377.16</data>")
  
 }

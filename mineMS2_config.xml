@@ -56,7 +56,7 @@
 
       <param name="network_graphml" value="ex_gnps_network" ftype="graphml" />
 	  
-	  <param name="thresholdVn" value=""/>
+	    <param name="thresholdVn" value=""/>
 
       <output name="annotation_graphml" file="ex_annotated_gnps_network" ftype="graphml" />
 
