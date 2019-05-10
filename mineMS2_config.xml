@@ -1,10 +1,11 @@
-<tool id="mineMS2" name="mineMS2" version="0.0.0">
+<tool id="mineMS2" name="mineMS2" version="0.2.0">
   <description>Annotation of spectral libraries with exact fragmentation patterns</description>
   
   <requirements>
     <requirement type="package" version="1.1_4">r-batch</requirement>
     <!-- <requirement type="package" version="1.4.0">bioconductor-mineMS2</requirement> -->
-	<requirement type="package" version="1.1_4">r-igraph</requirement>
+	<requirement type="package" version="1.2.2">r-igraph</requirement>
+    <requirement type="package" version="0.9">r-minems2</requirement>
   </requirements>
   
   <stdio>
@@ -33,15 +34,15 @@
   
     <param name="spectra_mgf" label="MS2 spectra" type="data" format="mgf" help="mgf file" />
 	 
-    <param name="network_graphml" label="GNPS molecular network" type="data" format="graphml" help="graphML file resulting from the GNPS analysis of the mgf file above" />
+    <param name="network_graphml" label="GNPS molecular network" type="data" format="xml" help="graphML file resulting from the GNPS analysis of the mgf file above" />
     
-    <param name="thresholdVn" label="Motif intensity,Proportion of spectra threshold" type="text" value = "X,Y" help="only motifs with at least X% of intensity in at least Y spectra will be kept" />
+    <param name="thresholdVn" label="Motif intensity,Proportion of spectra threshold" type="text" value = "50,2" help="only motifs with at least X% of intensity in at least Y spectra will be kept" />
     
   </inputs>
   
   <outputs>
 
-    <data name="annotation_graphml" label="${tool.name}_annotation.graphml" format="graphml" ></data>
+    <data name="annotation_graphml" label="${tool.name}_annotation.graphml" format="xml" ></data>
 
     <data name="figure_pdf" label="${tool.name}_figure.pdf" format="pdf"/>
 		
@@ -150,10 +151,6 @@ Motif intensity, Proportion of spectra threshold; (default = 7)
 ------------
 Output files
 ------------
-
-spectra.mgf
-	| All MS2 spectra as a single mgf file.
-	|
 
 network.graphml
 	| GNPS molecular network as a graphml file. We strongly recommend that the GNPS network was computed on the same spectra.mgf file as above. This network can be visualized in Cytoscape (note that the GraphML format is supported by Cytoscape 3: select 'File > Import > Network from file'; with Cytoscape 2, the GraphMLReader plugin is needed):
