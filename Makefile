@@ -23,6 +23,22 @@ planemotest: R_LIBS_USER=
 planemotest: planemo-venv/bin/planemo
 	. planemo-venv/bin/activate && planemo test --conda_dependency_resolution --conda_prefix "$(CONDA_PREFIX)" --galaxy_branch release_19.05
 
+planemo-testtoolshed-diff: dist/minems2/ planemo-venv/bin/planemo
+	. planemo-venv/bin/activate && cd $< && planemo shed_diff --shed_target testtoolshed
+
+planemo-testtoolshed-update: dist/minems2/ planemo-venv/bin/planemo
+	. planemo-venv/bin/activate && cd $< && planemo shed_update --check_diff --shed_target testtoolshed
+
+planemo-toolshed-diff: dist/minems2/ planemo-venv/bin/planemo
+	. planemo-venv/bin/activate && cd $< && planemo shed_diff --shed_target toolshed
+
+planemo-toolshed-update: dist/minems2/ planemo-venv/bin/planemo
+	. planemo-venv/bin/activate && cd $< && planemo shed_update --check_diff --shed_target toolshed
+
+dist/minems2/:
+	mkdir -p $@
+	cp -r README.md mineMS2_wrapper.R mineMS2_config.xml test-data $@
+
 clean:
 	$(RM) -r dist
 	$(RM) -r planemo-venv
