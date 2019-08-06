@@ -1,0 +1,20 @@
+matrix:
+    include:
+        - name: "Plain tests"
+          language: r
+          r: release
+          install: ./travis_install_deps.sh
+          script: make test
+        - name: "Planemo tests"
+          dist: xenial # To get Python >=2.7.7
+          language: python
+          addons:
+              apt:
+                  packages: python-virtualenv
+          script: make planemolint planemotest
+
+notifications:
+ email:
+  recipients:
+   - pk.roger@icloud.com
+
