@@ -36,3 +36,5 @@ vignettes/*.pdf
 rsconnect/
 .Rproj.user
 test_output.*
+tool_test_output.*
+planemo-venv

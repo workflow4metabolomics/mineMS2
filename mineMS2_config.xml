@@ -53,13 +53,13 @@
   <tests>
     <test>
 	
-      <param name="spectra_mgf" value="ex_mgf" ftype="mgf" />	  
+      <param name="spectra_mgf" value="ex_mgf.mgf" ftype="mgf" />	  
 
-      <param name="network_graphml" value="ex_gnps_network" ftype="graphml" />
+      <param name="network_graphml" value="ex_gnps_network.graphml" ftype="xml" />
 	  
 	    <param name="thresholdVn" value=""/>
 
-      <output name="annotation_graphml" file="ex_annotated_gnps_network" ftype="graphml" />
+      <output name="annotation_graphml" file="ex_annotated_gnps_network.graphml" ftype="xml" lines_diff="30"/>
 
     </test>
   </tests>
