@@ -1,20 +1,20 @@
-<tool id="mineMS2" name="mineMS2" version="0.2.0">
+<tool id="mineMS2" name="mineMS2" version="0.2.2">
   <description>Annotation of spectral libraries with exact fragmentation patterns</description>
-  
+
   <requirements>
-    <requirement type="package" version="1.1_4">r-batch</requirement>
-    <!-- <requirement type="package" version="1.4.0">bioconductor-mineMS2</requirement> -->
-	<requirement type="package" version="1.2.2">r-igraph</requirement>
-    <requirement type="package" version="0.9">r-minems2</requirement>
+    <requirement type="package" version="1.1_5">r-batch</requirement>
+    <!-- <requirement type="package" version="1.4.0">bioconductor-minems2</requirement> -->
+ 	<requirement type="package" version="1.2.4.1">r-igraph</requirement>
+    <requirement type="package" version="0.9.2">r-minems2</requirement>
   </requirements>
-  
+
   <stdio>
     <exit_code range="1:" level="fatal" />
   </stdio>
-  
+
   <command><![CDATA[
-  
-  Rscript $__tool_directory__/mineMS2_wrapper.R
+
+  $__tool_directory__/mineMS2_wrapper.R
   
   spectra_mgf "$spectra_mgf"
   
