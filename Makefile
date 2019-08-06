@@ -8,7 +8,7 @@ install_deps:
 test:
 	Rscript "mineMS2_wrapper.R" spectra_mgf "test-data/ex_mgf.mgf" network_graphml "test-data/ex_gnps_network.graphml" thresholdVn "" annotation_graphml "test_output.graphml" figure_pdf "test_output.pdf" information_txt "test_output.txt"
 #	diff "test_output.graphml" "test-data/ex_annotated_gnps_network.graphml"
-#	TODO  Not possible to check output. Lines "<data key="v_id">P83</data>" are changed on each run. The P??? id is changed. Find a way to have it fixed.
+#	TODO Not possible to check output. Lines "<data key="v_id">P83</data>" are changed on each run. The P??? id is changed. Find a way to have it fixed.
 
 planemo-venv/bin/planemo: planemo-venv
 	. planemo-venv/bin/activate && pip install "pip>=7"
