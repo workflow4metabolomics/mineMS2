@@ -20,6 +20,6 @@ for dep in $dependencies ; do
 done
 
 # Install right version of mineMS2
-version=$(grep r-minems2 mineMS2_config.xml | sed 's/^.*version="\([^"]*\)".*$/\1/')
+version=$(grep '>r-minems2' mineMS2_config.xml | sed 's/^.*version="\([^"]*\)".*$/\1/')
 R -e "devtools::install_github('adelabriere/mineMS2', ref = 'v$version')"
 
