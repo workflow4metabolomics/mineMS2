@@ -8,8 +8,8 @@ matrix:
               - R -e 'install.packages("devtools", repos="https://cloud.r-project.org/")'
               - R -e 'install.packages("batch", repos="https://cloud.r-project.org/")'
               - R -e 'install.packages("igraph", repos="https://cloud.r-project.org/")'
-              - R -e 'devtools::install_github("adelabriere/mineMS2", ref = "v0.9.3")'
               - R -e 'install.packages("BiocManager");BiocManager::install("MSnbase")'
+              - R -e 'devtools::install_github("adelabriere/mineMS2", ref = "v0.9.3")'
           script: make test
         - name: "Planemo tests"
           dist: xenial # To get Python >=2.7.7
