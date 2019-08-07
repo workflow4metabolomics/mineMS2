@@ -5,7 +5,9 @@ matrix:
           cache: packages
           r: release
           before_install:
-              - ./travis_install_deps.sh
+              - R -e "devtools::install_version('batch', version = '1.1_5', repos = 'https://cloud.r-project.org/')"
+              - R -e "devtools::install_version('igraph', version = '1.2.4.1', repos = 'https://cloud.r-project.org/')"
+              - R -e "devtools::install_github('adelabriere/mineMS2', ref = 'v0.9.3')"
               - R -e 'install.packages("BiocManager");BiocManager::install("MSnbase")'
           script: make test
         - name: "Planemo tests"
