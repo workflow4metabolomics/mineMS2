@@ -5,7 +5,7 @@ matrix:
           r: release
           install: ./travis_install_deps.sh
           script: make test
-        - name: "Planemo tests
+        - name: "Planemo tests"
           dist: xenial # To get Python >=2.7.7
           language: python
           python:
