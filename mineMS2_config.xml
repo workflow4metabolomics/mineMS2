@@ -14,7 +14,7 @@
 
   <command><![CDATA[
 
-  $__tool_directory__/mineMS2_wrapper.R
+  Rscript --vanilla $__tool_directory__/mineMS2_wrapper.R
   
   spectra_mgf "$spectra_mgf"
   
