@@ -5,6 +5,7 @@ matrix:
           cache: packages
           r: release
           before_install:
+              - R -e 'install.packages("devtools")'
               - R -e "devtools::install_version('batch', version = '1.1_5', repos = 'https://cloud.r-project.org/')"
               - R -e "devtools::install_version('igraph', version = '1.2.4.1', repos = 'https://cloud.r-project.org/')"
               - R -e "devtools::install_github('adelabriere/mineMS2', ref = 'v0.9.3')"
