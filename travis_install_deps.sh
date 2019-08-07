@@ -19,9 +19,6 @@ for dep in $dependencies ; do
 	R -e "devtools::install_version('$dep', version = '$version', repos = 'https://cloud.r-project.org/')"
 done
 
-# Install MSnbase
-R =e 'install.packages("BiocManager");BiocManager::install("MSnbase")'
-
 # Install right version of mineMS2
 version=$(grep '>r-minems2' mineMS2_config.xml | sed 's/^.*version="\([^"]*\)".*$/\1/')
 R -e "devtools::install_github('adelabriere/mineMS2', ref = 'v$version')"

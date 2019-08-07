@@ -2,8 +2,11 @@ matrix:
     include:
         - name: "Plain tests"
           language: r
+          cache: packages
           r: release
-          install: ./travis_install_deps.sh
+          before_install:
+              - ./travis_install_deps.sh
+              - R -e 'install.packages("BiocManager");BiocManager::install("MSnbase")'
           script: make test
         - name: "Planemo tests"
           dist: xenial # To get Python >=2.7.7
