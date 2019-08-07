@@ -5,7 +5,7 @@ matrix:
           cache: packages
           r: release
           before_install:
-              - apt install -y libnetcdf-dev
+              - sudo apt-get install -y libnetcdf-dev
               - R -e 'install.packages("devtools", repos="https://cloud.r-project.org/")'
               - R -e 'install.packages("batch", repos="https://cloud.r-project.org/")'
               - R -e 'install.packages("igraph", repos="https://cloud.r-project.org/")'
